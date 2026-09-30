@@ -1,0 +1,25 @@
+{
+  "name": "claude-code-film",
+  "version": "1.0.0",
+  "private": true,
+  "description": "20-second motion graphics film about Anthropic's Claude Code",
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion render ClaudeCodeFilm out/claude-code-film-Cursor.mp4 --concurrency=4",
+    "still": "remotion still ClaudeCodeFilm out/frame.png",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.531",
+    "@remotion/google-fonts": "4.0.531",
+    "@remotion/shapes": "4.0.531",
+    "@remotion/transitions": "4.0.531",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.531"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "typescript": "5.9.3"
+  }
+}

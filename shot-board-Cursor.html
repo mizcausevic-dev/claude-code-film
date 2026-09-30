@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Claude Code — 20s film, shot board</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			:root {
+				--cream: #f0eee6;
+				--cream-dim: #e4e0d3;
+				--paper-line: #cbc5b4;
+				--ink: #141413;
+				--ink-panel: #1c1b18;
+				--ink-line: #302e29;
+				--clay: #d97757;
+				--slate: #6b6963;
+				--mute: #9b988f;
+				--green: #83b06b;
+				--serif: 'Instrument Serif', Georgia, serif;
+				--mono: 'JetBrains Mono', Consolas, monospace;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				margin: 0;
+				background: var(--ink);
+				color: var(--cream);
+				font-family: var(--mono);
+				font-size: 14px;
+				line-height: 1.6;
+				background-image: linear-gradient(
+						rgba(240, 238, 230, 0.03) 1px,
+						transparent 1px
+					),
+					linear-gradient(90deg, rgba(240, 238, 230, 0.03) 1px, transparent 1px);
+				background-size: 48px 48px;
+			}
+
+			.wrap {
+				max-width: 1180px;
+				margin: 0 auto;
+				padding: 64px 32px 120px;
+			}
+
+			.kicker {
+				font-size: 12px;
+				letter-spacing: 0.24em;
+				text-transform: uppercase;
+				color: var(--clay);
+			}
+
+			h1 {
+				font-family: var(--serif);
+				font-weight: 400;
+				font-size: clamp(44px, 7vw, 84px);
+				line-height: 1.02;
+				margin: 14px 0 18px;
+			}
+
+			.lede {
+				color: var(--mute);
+				max-width: 62ch;
+				margin: 0 0 40px;
+			}
+
+			.rule {
+				height: 1px;
+				background: var(--ink-line);
+				margin: 48px 0 40px;
+			}
+
+			h2 {
+				font-family: var(--serif);
+				font-weight: 400;
+				font-size: 34px;
+				margin: 0 0 6px;
+			}
+
+			.sub {
+				color: var(--slate);
+				font-size: 12px;
+				letter-spacing: 0.18em;
+				text-transform: uppercase;
+				margin-bottom: 26px;
+			}
+
+			video {
+				width: 100%;
+				display: block;
+				border-radius: 14px;
+				border: 1px solid var(--ink-line);
+				background: #000;
+			}
+
+			.meta {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+				margin-top: 18px;
+			}
+
+			.chip {
+				font-size: 11px;
+				letter-spacing: 0.16em;
+				text-transform: uppercase;
+				padding: 6px 12px;
+				border: 1px solid var(--ink-line);
+				border-radius: 999px;
+				color: var(--mute);
+			}
+
+			.chip strong {
+				color: var(--cream);
+				font-weight: 500;
+			}
+
+			/* Timeline bar, proportional to the real frame counts. */
+			.bar {
+				display: flex;
+				height: 46px;
+				border-radius: 8px;
+				overflow: hidden;
+				border: 1px solid var(--ink-line);
+			}
+
+			.bar span {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 10px;
+				letter-spacing: 0.14em;
+				text-transform: uppercase;
+				color: var(--cream);
+				border-right: 1px solid rgba(20, 20, 19, 0.4);
+				overflow: hidden;
+				white-space: nowrap;
+			}
+
+			.bar span:last-child {
+				border-right: 0;
+			}
+
+			.ticks {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 8px;
+				color: var(--slate);
+				font-size: 11px;
+				letter-spacing: 0.14em;
+			}
+
+			.shots {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+				gap: 26px;
+			}
+
+			.shot {
+				border: 1px solid var(--ink-line);
+				border-radius: 12px;
+				overflow: hidden;
+				background: var(--ink-panel);
+			}
+
+			.shot img {
+				width: 100%;
+				display: block;
+				border-bottom: 1px solid var(--ink-line);
+			}
+
+			.shot .body {
+				padding: 18px 20px 22px;
+			}
+
+			.shot h3 {
+				font-family: var(--serif);
+				font-weight: 400;
+				font-size: 24px;
+				margin: 8px 0 8px;
+			}
+
+			.shot p {
+				margin: 0;
+				color: var(--mute);
+				font-size: 13px;
+			}
+
+			.shot .time {
+				font-size: 11px;
+				letter-spacing: 0.18em;
+				color: var(--clay);
+				text-transform: uppercase;
+			}
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 13px;
+			}
+
+			th,
+			td {
+				text-align: left;
+				padding: 14px 16px;
+				border-bottom: 1px solid var(--ink-line);
+				vertical-align: top;
+			}
+
+			th {
+				font-size: 11px;
+				letter-spacing: 0.18em;
+				text-transform: uppercase;
+				color: var(--slate);
+				font-weight: 500;
+			}
+
+			td:first-child {
+				color: var(--clay);
+				white-space: nowrap;
+			}
+
+			td.d {
+				color: var(--mute);
+			}
+
+			.note {
+				border-left: 2px solid var(--clay);
+				padding: 4px 0 4px 20px;
+				color: var(--mute);
+				max-width: 78ch;
+			}
+
+			.note b {
+				color: var(--cream);
+				font-weight: 500;
+			}
+
+			code {
+				color: var(--green);
+				background: rgba(131, 176, 107, 0.08);
+				padding: 2px 6px;
+				border-radius: 4px;
+				font-size: 12px;
+			}
+
+			footer {
+				margin-top: 64px;
+				color: var(--slate);
+				font-size: 11px;
+				letter-spacing: 0.2em;
+				text-transform: uppercase;
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				*,
+				::before,
+				::after {
+					transition-duration: 0.001ms !important;
+					animation-duration: 0.001ms !important;
+					animation-iteration-count: 1 !important;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrap">
+			<div class="kicker">Motion graphics · 20.000s · 1920×1080 · 60fps</div>
+			<h1>Claude Code<br />idea to shipped</h1>
+			<p class="lede">
+				A twenty second film with one argument: Claude Code reads a codebase, states
+				a plan, writes the diff, and proves it with a passing suite. Seven shots, six
+				transitions, 1200 frames. Rendered from code with Remotion, so every timing
+				number on this page is the number in the composition.
+			</p>
+
+			<video controls preload="metadata" poster="out/board/shot-6.jpg">
+				<source src="out/claude-code-film-Cursor.mp4" type="video/mp4" />
+			</video>
+			<div class="meta">
+				<span class="chip">Duration <strong>20.000 s</strong></span>
+				<span class="chip">Frames <strong>1200</strong></span>
+				<span class="chip">Rate <strong>60 fps</strong></span>
+				<span class="chip">Codec <strong>h264 · crf 16</strong></span>
+				<span class="chip">Size <strong>3.2 MB</strong></span>
+			</div>
+
+			<div class="rule"></div>
+
+			<h2>Timing</h2>
+			<div class="sub">Shot lengths are proportional. Overlaps are the transitions.</div>
+			<div class="bar" id="bar"></div>
+			<div class="ticks">
+				<span>00:00</span><span>00:05</span><span>00:10</span><span>00:15</span
+				><span>00:20</span>
+			</div>
+
+			<div class="rule"></div>
+
+			<h2>Shots</h2>
+			<div class="sub">Every beat holds for at least two seconds</div>
+			<div class="shots" id="shots"></div>
+
+			<div class="rule"></div>
+
+			<h2>Transitions</h2>
+			<div class="sub">Four written for this film, two from the Remotion library</div>
+			<table>
+				<thead>
+					<tr>
+						<th>Cut</th>
+						<th>Device</th>
+						<th>Why this one</th>
+					</tr>
+				</thead>
+				<tbody id="trans"></tbody>
+			</table>
+
+			<div class="rule"></div>
+
+			<h2>Art direction</h2>
+			<div class="sub">Two rules doing most of the work</div>
+			<p class="note">
+				<b>Serif is human, monospace is machine.</b> The developer's intent is set in
+				Instrument Serif on cream paper. Everything Claude Code does is JetBrains Mono
+				on ink. The film crosses that line exactly twice: once when the prompt is
+				handed over, once when the result comes back. Nothing else has to explain the
+				handoff.
+			</p>
+			<p class="note" style="margin-top: 22px">
+				<b>The HUD carries the structure.</b> A persistent mark, chapter label, and
+				progress line mean no shot has to introduce itself. The type colour crossfades
+				between ink and cream at the two background changes rather than cutting, so the
+				furniture never flickers.
+			</p>
+
+			<div class="rule"></div>
+
+			<h2>Reproduce</h2>
+			<div class="sub">From a clean clone</div>
+			<p class="note">
+				<code>npm install</code> then <code>npm run dev</code> for the Remotion Studio,
+				or <code>npm run build</code> to render the MP4 to
+				<code>out/claude-code-film-Cursor.mp4</code>. The shot durations and transition
+				overlaps live in one file,
+				<code>src/timeline.ts</code>, and the total is asserted to land on 1200 frames.
+			</p>
+			<p class="note" style="margin-top: 22px">
+				<b>The scenario is illustrative.</b> The checkout API, the request chart, and
+				the latency and 429 figures are written for the film. They are not measurements
+				of Claude Code or of any live service.
+			</p>
+
+			<footer>Kinetic Gain · shot board</footer>
+		</div>
+
+		<script>
+			const SHOTS = [
+				{
+					n: 1,
+					name: 'Idea',
+					frames: 180,
+					img: 'out/board/shot-1.jpg',
+					copy: 'A prompt types itself in serif on paper. A hairline draws underneath it, thickens, turns coral. That rule is the door into the next shot.',
+				},
+				{
+					n: 2,
+					name: 'Claude Code',
+					frames: 140,
+					img: 'out/board/shot-2.jpg',
+					copy: 'The mark blooms one blade at a time in an interleaved order, so it opens rather than sweeps. The wordmark tracks in from wide letterspacing.',
+				},
+				{
+					n: 3,
+					name: 'Context',
+					frames: 200,
+					img: 'out/board/shot-3.jpg',
+					copy: 'A lit read head travels the file. Lines brighten as they are read and stay lit. The file tree marks each path READ. One line gets called out.',
+				},
+				{
+					n: 4,
+					name: 'Plan',
+					frames: 190,
+					img: 'out/board/shot-4.jpg',
+					copy: 'Four steps, stated before they run. Each status glyph morphs from queued ring to sweeping arc to drawn check. The last one is still running at the cut.',
+				},
+				{
+					n: 5,
+					name: 'Edit',
+					frames: 220,
+					img: 'out/board/shot-5.jpg',
+					copy: 'The stale comment collapses out of the layout. Six added lines open their row height first, then wipe their text in. The suite runs and passes.',
+				},
+				{
+					n: 6,
+					name: 'Shipped',
+					frames: 230,
+					img: 'out/board/shot-6.jpg',
+					copy: 'Back on paper. Commit, deploy, and the whole argument in one chart: the same traffic, clipped at the limit instead of running away.',
+				},
+				{
+					n: 7,
+					name: 'End card',
+					frames: 140,
+					img: 'out/board/shot-7.jpg',
+					copy: 'The five chapter names the HUD has been counting off, stated once as a single line.',
+				},
+			];
+
+			const TRANS = [
+				[20, 'Rule expand', 'written', 'The hairline under the prompt splits and the ink world opens out of it, coral lips still visible on both edges.'],
+				[16, 'Clock wipe', 'library', 'A rotary sweep out of the title card. Mechanical on purpose: this is the machine taking over.'],
+				[18, 'Block zoom', 'written', 'Match cut. The flagged code pushes toward camera while the plan arrives from behind it.'],
+				[16, 'Blade wipe', 'written', 'A raked wipe with a lit leading edge. The slant echoes the diff gutter and gives the cut direction.'],
+				[20, 'Bar wipe', 'written', 'The passing test bar keeps travelling and becomes the wipe, carrying its glow from ink back to paper.'],
+				[10, 'Fade', 'library', 'Paper to paper. The only soft cut in the film, because the end card is the same world as the result.'],
+			];
+
+			const TOTAL = 1200;
+			const OVERLAP = TRANS.reduce((a, t) => a + t[0], 0);
+			const SUM = SHOTS.reduce((a, s) => a + s.frames, 0);
+
+			// Absolute start frame of each shot, matching src/timeline.ts.
+			let acc = 0;
+			const starts = SHOTS.map((s, i) => {
+				if (i === 0) return 0;
+				acc = acc + SHOTS[i - 1].frames - TRANS[i - 1][0];
+				return acc;
+			});
+
+			const tc = (f) => {
+				const s = f / 60;
+				return `${String(Math.floor(s)).padStart(2, '0')}:${String(
+					Math.round((s % 1) * 100),
+				).padStart(2, '0')}`;
+			};
+
+			const tint = (i) => `hsl(${14 + i * 7} ${52 - i * 4}% ${Math.round(24 + i * 5)}%)`;
+
+			document.getElementById('bar').innerHTML = SHOTS.map(
+				(s, i) =>
+					`<span style="flex:${s.frames};background:${tint(i)}">${
+						s.frames > 150 ? s.name : s.n
+					}</span>`,
+			).join('');
+
+			document.getElementById('shots').innerHTML = SHOTS.map(
+				(s, i) => `
+				<div class="shot">
+					<img src="${s.img}" alt="Shot ${s.n}, ${s.name}" />
+					<div class="body">
+						<div class="time">${String(s.n).padStart(2, '0')} · ${tc(starts[i])} → ${tc(
+							starts[i] + s.frames,
+						)} · ${(s.frames / 60).toFixed(2)}s</div>
+						<h3>${s.name}</h3>
+						<p>${s.copy}</p>
+					</div>
+				</div>`,
+			).join('');
+
+			document.getElementById('trans').innerHTML = TRANS.map(
+				(t, i) => `
+				<tr>
+					<td>${SHOTS[i].n} → ${SHOTS[i + 1].n}<br /><span style="color:var(--slate)">${
+						t[0]
+					}f · ${(t[0] / 60).toFixed(2)}s</span></td>
+					<td>${t[1]}<br /><span style="color:var(--slate);font-size:11px;letter-spacing:.14em;text-transform:uppercase">${
+						t[2]
+					}</span></td>
+					<td class="d">${t[3]}</td>
+				</tr>`,
+			).join('');
+
+			// Fail loudly if the board and the composition ever disagree.
+			if (SUM - OVERLAP !== TOTAL) {
+				document.title = `TIMING MISMATCH: ${SUM - OVERLAP} != ${TOTAL}`;
+			}
+		</script>
+	</body>
+</html>
